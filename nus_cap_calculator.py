@@ -16,28 +16,29 @@ import datetime
 from collections import Counter
 
 
+@st.cache
+def get_initial_data():
+    # Obtaining up-to-date data for application
+    now = datetime.datetime.now()
 
+    current_yr = int(now.strftime('%Y'))
+    current_mth_day = now.strftime('%m-%d')
 
-# Obtaining up-to-date data for application
-now = datetime.datetime.now()
+    if current_mth_day < "08-06":
+        yr_1, yr_2 = current_yr - 1, current_yr
 
-current_yr = int(now.strftime('%Y'))
-current_mth_day = now.strftime('%m-%d')
+    elif current_mth_day >= "08-06":
+        yr_1, yr_2 = current_yr, current_yr + 1
 
-if current_mth_day < "08-06":
-    yr_1, yr_2 = current_yr - 1, current_yr
+    api_url = f'https://api.nusmods.com/v2/{yr_1}-{yr_2}/moduleInfo.json'
+    data = requests.get(api_url).json()
 
-elif current_mth_day >= "08-06":
-    yr_1, yr_2 = current_yr, current_yr + 1
+    unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
 
-api_url = f'https://api.nusmods.com/v2/{yr_1}-{yr_2}/moduleInfo.json'
-data = requests.get(api_url).json()
+    
+get_initial_data()
 
-unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
-
-
-
-
+@st.cache
 def main():
     st.title('NUS Module CAP Calculator')
     
