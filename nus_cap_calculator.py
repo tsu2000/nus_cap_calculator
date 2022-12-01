@@ -42,8 +42,8 @@ def main():
     st.title('NUS Module CAP Calculator')
     
     with st.sidebar:   
-        st.components.v1.html("""<a href="https://github.com/tsu2000/XXXXXX" target="_blank"><img src="https://img.shields.io/static/v1?label=tsu2000&message=XXXXXX
-    &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/XXXXXX" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/XXXXXX?style=social" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
+        st.components.v1.html("""<a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/static/v1?label=tsu2000&message=nus_cap_calculator
+    &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/nus_cap_calculator?style=social" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
                               height = 28)            
         st.header('Navigation Bar')
         feature = st.radio('Select a feature:', ['Current CAP Analysis', 'Future CAP Calculation', 
