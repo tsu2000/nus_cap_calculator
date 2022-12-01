@@ -35,7 +35,7 @@ def get_initial_data():
 
     unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
     
-    return data, unique_mcs
+    return data, unique_mcs, yr_1, yr_2
 
 
 def main():
@@ -51,7 +51,7 @@ def main():
     
     # Select option
     if feature == 'Current CAP Analysis':
-        calc(data = get_initial_data()[0])
+        calc(data = get_initial_data()[0], yr_1 = get_initial_data()[2], yr_2 = get_initial_data()[3])
     elif feature == 'Future CAP Calculation':
         future()
     elif feature == 'CAP Sensitivity':
@@ -62,7 +62,7 @@ def main():
     
     
     
-def calc(data):
+def calc(data, yr_1, yr_2):
     st.markdown('#### Current CAP Analysis')
     
     if 'all_module_data' not in st.session_state:
