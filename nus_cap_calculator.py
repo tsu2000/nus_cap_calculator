@@ -133,7 +133,7 @@ def calc(data, yr_1, yr_2, now):
     df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points'],
                       data = st.session_state['all_module_data'])
 
-    st.markdown('###### Select a module and grade to view the data table (Link downloads the data to Excel as a .xlsx file)')
+    st.markdown('###### Add a module and grade to view the data table (Link to download the data as an .xlsx file will appear below the table on right)')
     if st.session_state['all_module_data'] != []:
         st.dataframe(df.style.format(precision = 1))
 
@@ -480,7 +480,7 @@ def explain():
     st.markdown('3. Sum the results of Step 2 to get the numerator of the CAP equation.')
     st.markdown('4. Finally, divide the result of Step 3 by the total number of module credits used to calculate the numerator to get your CAP.')
     
-    st.markdown('**Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be part of essential degree requirements, they are not factored into the calculation of CAP at all. Likewise, modules which have 0 MCs are not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
+    st.markdown('**Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be part of essential degree requirements, they are not factored into the calculation of CAP at all. Likewise, modules which have 0 MCs but are necessary for degree requirements are not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
     
     st.markdown('---')
     
