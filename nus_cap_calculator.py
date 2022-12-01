@@ -16,7 +16,7 @@ import datetime
 from collections import Counter
 
 
-@st.cache
+@st.cache(allow_output_mutation = True)
 def get_initial_data():
     # Obtaining up-to-date data for application
     now = datetime.datetime.now()
@@ -38,7 +38,7 @@ def get_initial_data():
     
 get_initial_data()
 
-@st.cache
+@st.cache(allow_output_mutation = True)
 def main():
     st.title('NUS Module CAP Calculator')
     
