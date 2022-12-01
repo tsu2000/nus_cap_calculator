@@ -133,7 +133,7 @@ def calc(data, yr_1, yr_2, now):
     df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points'],
                       data = st.session_state['all_module_data'])
 
-    st.markdown('###### Add a module and grade to view the data table (Link to download the data as an .xlsx file will appear below the table on right)')
+    st.markdown('###### Add a module and grade to view the data table (Link to download the data will appear on right)')
     if st.session_state['all_module_data'] != []:
         st.dataframe(df.style.format(precision = 1))
 
