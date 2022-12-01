@@ -52,10 +52,13 @@ def main():
     # Select option
     if feature == 'Current CAP Analysis':
         calc(data = get_initial_data()[0], yr_1 = get_initial_data()[2], yr_2 = get_initial_data()[3], now = get_initial_data()[4])
+        
     elif feature == 'Future CAP Calculation':
-        future()
+        future(unique_mcs = get_initial_data()[1])
+        
     elif feature == 'CAP Sensitivity':
         sense(unique_mcs = get_initial_data()[1])
+        
     elif feature == 'CAP Calculation Explanation':
         explain()
     
@@ -300,7 +303,7 @@ def calc(data, yr_1, yr_2, now):
 
             
             
-def future():
+def future(unique_mcs):
     st.markdown('#### Future CAP Calculation')
     
     if 'predicted_mod' not in st.session_state:
