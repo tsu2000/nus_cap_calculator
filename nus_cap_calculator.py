@@ -16,7 +16,7 @@ import datetime
 from collections import Counter
 
 
-@st.cache(allow_output_mutation = True)
+@st.experimental_singleton
 def get_initial_data():
     # Obtaining up-to-date data for application
     now = datetime.datetime.now()
@@ -35,12 +35,10 @@ def get_initial_data():
 
     unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
     
-    return unique_mcs, data
 
-    
 get_initial_data()
 
-@st.cache(allow_output_mutation = True)
+
 def main():
     st.title('NUS Module CAP Calculator')
     
