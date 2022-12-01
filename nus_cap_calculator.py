@@ -34,6 +34,8 @@ def get_initial_data():
     data = requests.get(api_url).json()
 
     unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
+    
+    return unique_mcs, data
 
     
 get_initial_data()
