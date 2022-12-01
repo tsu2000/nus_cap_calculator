@@ -35,8 +35,7 @@ def get_initial_data():
 
     unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
     
-
-get_initial_data()
+    return data, unique_mcs
 
 
 def main():
@@ -52,18 +51,18 @@ def main():
     
     # Select option
     if feature == 'Current CAP Analysis':
-        calc()
+        calc(data = get_initial_data()[0])
     elif feature == 'Future CAP Calculation':
         future()
     elif feature == 'CAP Sensitivity':
-        sense()
+        sense(unique_mcs = get_initial_data()[1])
     elif feature == 'CAP Calculation Explanation':
         explain()
     
     
     
     
-def calc():
+def calc(data):
     st.markdown('#### Current CAP Analysis')
     
     if 'all_module_data' not in st.session_state:
@@ -394,7 +393,7 @@ def future():
             
             
             
-def sense():
+def sense(unique_mcs):
     st.markdown('#### CAP Sensitivity')
     
     st.markdown("This section aims to provide an overview on how much your CAP changes by upon the addition of a single module's module credits and grade points depending on your initial CAP and module credits.")
