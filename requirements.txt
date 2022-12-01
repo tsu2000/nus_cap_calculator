@@ -7,3 +7,4 @@ plotly==5.8.1
 xlsxwriter==3.0.1
 requests==2.26.0
 datetime==4.5
+kaleido==0.2.1
