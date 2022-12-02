@@ -42,12 +42,16 @@ def main():
     st.title('NUS Module CAP Calculator')
     
     with st.sidebar:   
+        st.header(':twisted_rightwards_arrows: &nbsp; Navigation Bar')
+        feature = st.radio('Select a feature:', ['Current CAP Analysis', 
+                                                 'Future CAP Calculation', 
+                                                 'CAP Sensitivity', 
+                                                 'CAP Calculation Explanation'])                            
+        st.markdown('***')
+        st.header(':male-technologist: &nbsp; View Source Code &nbsp; :female-technologist:')
         st.components.v1.html("""<a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/static/v1?label=tsu2000&message=nus_cap_calculator
     &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/nus_cap_calculator?style=social" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
-                              height = 28)            
-        st.header('Navigation Bar')
-        feature = st.radio('Select a feature:', ['Current CAP Analysis', 'Future CAP Calculation', 
-                                                 'CAP Sensitivity', 'CAP Calculation Explanation'])
+                        height = 28)                                                  
     
     # Select option
     if feature == 'Current CAP Analysis':
@@ -66,8 +70,12 @@ def main():
     
     
 def calc(data, yr_1, yr_2, now):
-    st.markdown('#### Current CAP Analysis')
-    
+    st.markdown('#### :bar_chart: &nbsp; Current CAP Analysis')
+
+    st.markdown('This feature allows users to select modules as listed in NUSMods for the current Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
+
+    st.markdown('---')
+
     if 'all_module_data' not in st.session_state:
         st.session_state['all_module_data'] = []
 
@@ -133,11 +141,11 @@ def calc(data, yr_1, yr_2, now):
     df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points'],
                       data = st.session_state['all_module_data'])
 
-    st.markdown('###### Add a module and grade to view the data table (Link to download the data will appear on right)')
+    st.markdown('###### Add a module and grade to view and download the data table:')
     if st.session_state['all_module_data'] != []:
         st.dataframe(df.style.format(precision = 1))
 
-    analysis_col, export_col = st.columns([1, 0.05]) 
+    analysis_col, export_col = st.columns([1, 0.265]) 
 
     with export_col:
         def to_excel(df):
@@ -205,106 +213,112 @@ def calc(data, yr_1, yr_2, now):
             val = to_excel(df)
             b64 = base64.b64encode(val)
 
-            return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="mod_cap_details.xlsx">[\u2b07]</a>' 
+            return f'<a href="data:application/octet-stream;base64,{b64.decode()}" download="mod_cap_details.xlsx">:inbox_tray: Download (.xlsx)</a>' 
 
         if st.session_state['all_module_data'] != []:
             st.markdown(get_table_download_link(df), unsafe_allow_html = True)
 
     with analysis_col:
         if st.session_state['all_module_data'] != []:
-            analysis = st.button('View Full Analysis')
-        
-            if analysis and st.session_state['all_module_data'] != []:
+            analysis = st.button('View Analysis')
+        else:
+            analysis = None
 
-                df2 = df.dropna()
+    if analysis and st.session_state['all_module_data'] != []:
 
-                cap = sum(df2['No. of MCs'] * df2['Grade Points']) / sum(df2['No. of MCs'])
+        df2 = df.dropna()
 
-                final_cap = round(cap, 2)
-                dp4_cap = round(cap, 4)
+        cap = sum(df2['No. of MCs'] * df2['Grade Points']) / sum(df2['No. of MCs'])
 
-                # Degree classification
-                if final_cap >= 4.50:
-                    degree_class = 'Honours (Highest Distinction)'
-                elif final_cap >= 4.00:
-                    degree_class = 'Honours (Distinction)'
-                elif final_cap >= 3.50:
-                    degree_class = 'Honours (Merit)'            
-                elif final_cap >= 3.00:
-                    degree_class = 'Honours'        
-                elif final_cap >= 2.00:
-                    degree_class = 'Pass'
-                else:
-                    degree_class = 'Below requirements for graduation'
+        final_cap = round(cap, 2)
+        dp4_cap = round(cap, 4)
 
-                total_mcs = sum(df['No. of MCs'])
-                total_mcs_cap = sum(df2['No. of MCs'])
+        # Degree classification
+        if final_cap >= 4.50:
+            degree_class = 'Honours (Highest Distinction)'
+        elif final_cap >= 4.00:
+            degree_class = 'Honours (Distinction)'
+        elif final_cap >= 3.50:
+            degree_class = 'Honours (Merit)'            
+        elif final_cap >= 3.00:
+            degree_class = 'Honours'        
+        elif final_cap >= 2.00:
+            degree_class = 'Pass'
+        else:
+            degree_class = 'Below requirements for graduation'
 
-                # Cumulative modules
-                complete_total_mods = len(df)
-                conv_mods = len(df2)
-                sued_mods = len(df.loc[(df['Grade'] == 'U') | (df['Grade'] == 'S')])
-                cscu_mods = len(df.loc[(df['Grade'] == 'CU') | (df['Grade'] == 'CS')])
-                zero_mods = len(df.loc[df['No. of MCs'] == 0])
-                weird_mods = len(df.loc[(df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')])
+        total_mcs = sum(df['No. of MCs'])
+        total_mcs_cap = sum(df2['No. of MCs'])
 
-                table_dict = {'Final CAP': final_cap,
-                              'Degree Classification': degree_class,
-                              'Your CAP (To 4 d.p.)': dp4_cap,
-                              'Total No. of MCs used to calculate CAP': total_mcs_cap,
-                              'Total No. of MCs attempted': total_mcs,
-                              'Total No. of modules attempted': complete_total_mods,
-                              'No. of modules accounted for in CAP': conv_mods,
-                              'No. of modules which were S/Ued': sued_mods,
-                              'No. of CS/CU modules taken': cscu_mods,
-                              "No. of modules with a 'EXE', 'IC', 'IP' or 'W' grade": weird_mods,
-                              'Date of Overview': now.strftime('%Y-%m-%d')}
+        # Cumulative modules
+        complete_total_mods = len(df)
+        conv_mods = len(df2)
+        sued_mods = len(df.loc[(df['Grade'] == 'U') | (df['Grade'] == 'S')])
+        cscu_mods = len(df.loc[(df['Grade'] == 'CU') | (df['Grade'] == 'CS')])
+        zero_mods = len(df.loc[df['No. of MCs'] == 0])
+        weird_mods = len(df.loc[(df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')])
 
-                col_fill_colors = ['lightcyan']*2 + ['white']*8 + ['gainsboro']
-                font_colors = ['crimson']*2 + ['black']*8 + ['darkgreen']
+        table_dict = {'Final CAP': final_cap,
+                        'Degree Classification': degree_class,
+                        'Your CAP (To 4 d.p.)': dp4_cap,
+                        'Total No. of MCs used to calculate CAP': total_mcs_cap,
+                        'Total No. of MCs attempted': total_mcs,
+                        'Total No. of modules attempted': complete_total_mods,
+                        'No. of modules accounted for in CAP': conv_mods,
+                        'No. of modules which were S/Ued': sued_mods,
+                        'No. of CS/CU modules taken': cscu_mods,
+                        "No. of modules with a 'EXE', 'IC', 'IP' or 'W' grade": weird_mods,
+                        'Date of Overview': now.strftime('%Y-%m-%d')}
 
-                fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
-                                         header = dict(values = ['<b>Module Overview & Detailed Analysis<b>', 
-                                                                 '<b>Result<b>'],
-                                                       fill_color = 'lightskyblue',
-                                                       line_color = 'black',
-                                                       align = 'center',
-                                                       font = dict(color = 'black', 
-                                                                   size = 14,
-                                                                   family = 'Georgia')),
-                                         cells = dict(values = [list(table_dict.keys()),
-                                                                list(table_dict.values())], 
-                                                      fill_color = [col_fill_colors, col_fill_colors],
-                                                      line_color = 'black',
-                                                      align = ['right', 'left'],
-                                                      font = dict(color = [font_colors, font_colors], 
-                                                                  size = [14, 14],
-                                                                  family = ['Georgia', 'Georgia Bold']),
-                                                      height = 25))])
+        col_fill_colors = ['lightcyan']*2 + ['white']*8 + ['gainsboro']
+        font_colors = ['crimson']*2 + ['black']*8 + ['darkgreen']
 
-                fig.update_layout(height = 325, width = 700, margin = dict(l = 5, r = 5, t = 5, b = 5))
-                st.plotly_chart(fig, use_container_width = True)
+        fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
+                                    header = dict(values = ['<b>Module Overview & Detailed Analysis<b>', 
+                                                            '<b>Result<b>'],
+                                                fill_color = 'lightskyblue',
+                                                line_color = 'black',
+                                                align = 'center',
+                                                font = dict(color = 'black', 
+                                                            size = 14,
+                                                            family = 'Georgia')),
+                                    cells = dict(values = [list(table_dict.keys()),
+                                                        list(table_dict.values())], 
+                                                fill_color = [col_fill_colors, col_fill_colors],
+                                                line_color = 'black',
+                                                align = ['right', 'left'],
+                                                font = dict(color = [font_colors, font_colors], 
+                                                            size = [14, 14],
+                                                            family = ['Georgia', 'Georgia Bold']),
+                                                height = 25))])
 
-                # Create an in-memory buffer
-                buffer = io.BytesIO()
+        fig.update_layout(height = 325, width = 700, margin = dict(l = 5, r = 5, t = 5, b = 5))
+        st.plotly_chart(fig, use_container_width = True)
 
-                # Save the figure as a pdf to the buffer
-                fig.write_image(file = buffer, scale = 6, format = 'pdf')
+        # Create an in-memory buffer
+        buffer = io.BytesIO()
 
-                # Download the pdf from the buffer
-                st.download_button(
-                    label = 'Download PDF',
-                    data = buffer,
-                    file_name = 'cap_overview.pdf',
-                    mime = 'application/octet-stream',
-                    help = 'Downloads your module overview as a PDF File'
-                )
+        # Save the figure as a pdf to the buffer
+        fig.write_image(file = buffer, scale = 6, format = 'pdf')
+
+        # Download the pdf from the buffer
+        st.download_button(
+            label = 'Download Analysis as PDF',
+            data = buffer,
+            file_name = 'cap_overview.pdf',
+            mime = 'application/octet-stream',
+            help = 'Downloads your module analysis as a PDF File'
+        )
+
+    st.markdown('---')
             
 
             
             
 def future(unique_mcs):
-    st.markdown('#### Future CAP Calculation')
+    st.markdown('#### :question: &nbsp; Future CAP Calculation')
+
+    st.markdown('This feature allows users to calculate how their current CAP will change with the addition of new modules with different grades and module credits.')
     
     if 'predicted_mod' not in st.session_state:
         st.session_state['predicted_mod'] = []
@@ -322,8 +336,9 @@ def future(unique_mcs):
         
     with mc_col:
         total_mcs = st.number_input('Number of MCs used to calculate current CAP:', min_value = 0.0, max_value = 160.0, value = 20.0, step = 0.5)
-        
-    st.markdown('###### Select additional number of modules with their respective predicted grades:')
+    
+    st.markdown('---')    
+    st.markdown('##### Select additional number of modules with their respective predicted grades:')
     
     add_mod_grade_col, add_mod_mc_col = st.columns([1, 1])
     
@@ -344,7 +359,7 @@ def future(unique_mcs):
     with add_mod_mc_col:
         additional_mod_mcs = st.selectbox('Choose additional Module Credits:', unique_mcs, index = 6)
             
-    grade_w_mcs = f'Grade: {additional_mod_grade} | MC: {additional_mod_mcs}'
+    grade_w_mcs = f'Module w Grade: {additional_mod_grade} | MC: {additional_mod_mcs}'
         
     amb2_col, rmb2_col, clear2_col = st.columns([1, 4.2, 0.8]) 
 
@@ -397,9 +412,9 @@ def future(unique_mcs):
             
             
 def sense(unique_mcs):
-    st.markdown('#### CAP Sensitivity')
+    st.markdown('#### :thermometer: &nbsp; CAP Sensitivity')
     
-    st.markdown("This section aims to provide an overview on how much your CAP changes by upon the addition of a single module's module credits and grade points depending on your initial CAP and module credits.")
+    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module's module credits and grade points based on your current provided CAP and module credits.")
 
     cap_col, mc_col = st.columns([1, 1]) 
     
@@ -441,7 +456,7 @@ def sense(unique_mcs):
         plt.title(f'{cap_type}' + r'$\bf{' + str(round(current_cap, 2)) + '}$' + ' at ' + r'$\bf{' + str(total_mcs) + '}$' + ' MCs after addition of a single module', y = 1.035)
 
         return st.pyplot(fig)
-        
+
     plottype = st.radio('Choose visualisation type:', ['Show new CAP', 'Show change in CAP'])
     
     if plottype == 'Show new CAP':
@@ -449,14 +464,20 @@ def sense(unique_mcs):
         
     elif plottype == 'Show change in CAP':
         future_plotting('Change in CAP of ', 'RdBu', cap_change_df)
+    
+    st.markdown('---')
         
         
         
         
 def explain():
-    st.markdown('#### CAP Calculation Explanation')
+    st.markdown('#### :bulb: &nbsp; CAP Calculation Explanation')
+
+    st.markdown('This feature describes how Cumulative Average Point (CAP) at NUS is calculated in detail.')
+
+    st.markdown('---')
     
-    st.markdown('To calculate the CAP for $n$ number of modules:')
+    st.markdown('###### To calculate the CAP for $n$ number of modules:')
     st.markdown('###')
     
     st.markdown(r'''$G = \text{Your Module Grade Points}$''')
@@ -476,11 +497,11 @@ def explain():
                 
                 
     st.markdown('1. Multiply the grade points you have obtained for each module by the number of module credits assigned to it.')
-    st.markdown('2. Repeat Step 1 for all relevant modules.')
+    st.markdown('2. Repeat Step 1 for all relevant modules.*')
     st.markdown('3. Sum the results of Step 2 to get the numerator of the CAP equation.')
     st.markdown('4. Finally, divide the result of Step 3 by the total number of module credits used to calculate the numerator to get your CAP.')
     
-    st.markdown('**Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be part of essential degree requirements, they are not factored into the calculation of CAP at all. Likewise, modules which have 0 MCs but are necessary for degree requirements are not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
+    st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP. Likewise, modules which have 0 MCs but are essential degree requirements are likewise not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
     
     st.markdown('---')
     
