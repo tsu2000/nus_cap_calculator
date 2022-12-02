@@ -6,7 +6,6 @@ import seaborn as sns
 import plotly.graph_objects as go
 import plotly.io as pio
 
-
 import xlsxwriter
 import base64
 import io
@@ -65,8 +64,6 @@ def main():
         
     elif feature == 'CAP Calculation Explanation':
         explain()
-    
-    
     
     
 def calc(data, yr_1, yr_2, now):
@@ -311,9 +308,7 @@ def calc(data, yr_1, yr_2, now):
         )
 
     st.markdown('---')
-            
-
-            
+                       
             
 def future(unique_mcs):
     st.markdown('#### :question: &nbsp; Future CAP Calculation')
@@ -338,7 +333,7 @@ def future(unique_mcs):
         total_mcs = st.number_input('Number of MCs used to calculate current CAP:', min_value = 0.0, max_value = 160.0, value = 20.0, step = 0.5)
     
     st.markdown('---')    
-    st.markdown('##### Select additional number of modules with their respective predicted grades:')
+    st.markdown('##### Select additional modules with their respective grades:')
     
     add_mod_grade_col, add_mod_mc_col = st.columns([1, 1])
     
@@ -407,14 +402,12 @@ def future(unique_mcs):
             
             st.markdown(f'New CAP after computation: &emsp; &emsp; &emsp; &emsp; &emsp; &nbsp; **{round(new_cap, 2)}**')
             st.markdown(f'MCs used to calculate new CAP: &emsp; &emsp; &emsp; **{round(new_mcs, 2)}**')
-
-            
-            
+           
             
 def sense(unique_mcs):
     st.markdown('#### :thermometer: &nbsp; CAP Sensitivity')
     
-    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module's module credits and grade points based on your current provided CAP and module credits.")
+    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module with differing grades and module credits, from the stated current CAP and module credits.")
 
     cap_col, mc_col = st.columns([1, 1]) 
     
@@ -468,8 +461,6 @@ def sense(unique_mcs):
     st.markdown('---')
         
         
-        
-        
 def explain():
     st.markdown('#### :bulb: &nbsp; CAP Calculation Explanation')
 
@@ -499,17 +490,15 @@ def explain():
     st.markdown('1. Multiply the grade points you have obtained for each module by the number of module credits assigned to it.')
     st.markdown('2. Repeat Step 1 for all relevant modules.*')
     st.markdown('3. Sum the results of Step 2 to get the numerator of the CAP equation.')
-    st.markdown('4. Finally, divide the result of Step 3 by the total number of module credits used to calculate the numerator to get your CAP.')
+    st.markdown('4. Finally, divide the result of Step 3 by the total number of module credits (denominator of CAP equation) used to calculate the numerator to get your CAP.')
     
     st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP. Likewise, modules which have 0 MCs but are essential degree requirements are likewise not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
     
     st.markdown('---')
     
-    st.markdown('Click the link below to obtain more information about how CAP is calculated in NUS and the relevant grade points for each grade:')
+    st.markdown('Click the link below to obtain more information about how CAP is calculated at NUS and the relevant grade points for each grade:')
     st.markdown("[**NUS Registrar's Office - Modular System**](https://www.nus.edu.sg/registrar/academic-information-policies/non-graduating/modular-system)")
     
     
-    
-
 if __name__ == "__main__":
     main()
