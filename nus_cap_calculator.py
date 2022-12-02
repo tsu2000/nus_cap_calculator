@@ -486,7 +486,7 @@ def explain():
     
     st.markdown('Each module taken at NUS is usually graded on a modular basis, meaning that each module has a fixed number of Module Credits (or MCs), and that each letter grade given after the completion of a module corresponds to a specific number of grade points. To get your Cumulative Average Points or CAP, simply do the following:')
                 
-    st.markdown("1. Obtain the grade points for the module by converting your grade given to the grade points allocated (e.g. 'A+/A' is 5 grade points, 'B' is 3.5 grade points etc.)"          
+    st.markdown("1. Obtain the grade points for the module by converting your grade given to the grade points allocated (e.g. 'A+/A' is 5 grade points, 'B' is 3.5 grade points etc.)")          
     st.markdown('2. Multiply the grade points you have obtained for each module by the number of module credits assigned to it.')
     st.markdown('3. Repeat steps 1 and 2 for all relevant modules.*')
     st.markdown('4. Sum the results of step 3 to get the numerator of the CAP equation.')
