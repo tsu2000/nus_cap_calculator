@@ -471,8 +471,8 @@ def explain():
     st.markdown('###### To calculate the CAP for $n$ number of modules:')
     st.markdown('###')
     
-    st.markdown(r'''$G = \text{Your Module Grade Points}$''')
-    st.markdown(r'''$G_n = \text{Your Specific Module Grade Points for the } n^\text{th} \text{ module used in CAP calculation}$''')
+    st.markdown(r'''$G = \text{Module Grade Points}$''')
+    st.markdown(r'''$G_n = \text{Specific Module Grade Points for the } n^\text{th} \text{ module used in CAP calculation}$''')
     st.markdown(r'''$MC = \text{Module Credits}$''')
     st.markdown(r'''$MC_n = \text{Specific Module Credits for the } n^\text{th} \text{ module used in CAP calculation}$''')
     
@@ -486,13 +486,13 @@ def explain():
     
     st.markdown('Each module taken at NUS is usually graded on a modular basis, meaning that each module has a fixed number of Module Credits (or MCs), and that each letter grade given after the completion of a module corresponds to a specific number of grade points. To get your Cumulative Average Points or CAP, simply do the following:')
                 
-                
-    st.markdown('1. Multiply the grade points you have obtained for each module by the number of module credits assigned to it.')
-    st.markdown('2. Repeat Step 1 for all relevant modules.*')
-    st.markdown('3. Sum the results of Step 2 to get the numerator of the CAP equation.')
-    st.markdown('4. Finally, divide the result of Step 3 by the total number of module credits (denominator of CAP equation) used to calculate the numerator to get your CAP.')
+    st.markdown("1. Obtain the grade points for the module by converting your grade given to the grade points allocated (e.g. 'A+/A' is 5 grade points, 'B' is 3.5 grade points etc.)"          
+    st.markdown('2. Multiply the grade points you have obtained for each module by the number of module credits assigned to it.')
+    st.markdown('3. Repeat steps 1 and 2 for all relevant modules.*')
+    st.markdown('4. Sum the results of step 3 to get the numerator of the CAP equation.')
+    st.markdown('5. Finally, divide the result of step 4 by the total number of module credits (denominator of CAP equation) used to calculate the numerator to get your CAP.')
     
-    st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP. Likewise, modules which have 0 MCs but are essential degree requirements are likewise not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
+    st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP **at all**. Likewise, modules which have 0 MCs but are essential degree requirements are likewise not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
     
     st.markdown('---')
     
