@@ -492,7 +492,7 @@ def explain():
     st.markdown('4. Sum the results of step 3 to get the numerator of the CAP equation.')
     st.markdown('5. Finally, divide the result of step 4 by the total number of module credits (denominator of CAP equation) used to calculate the numerator to get your CAP.')
     
-    st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP **at all**. Likewise, modules which have 0 MCs but are essential degree requirements are likewise not factored into the calculation of CAP. Furthermore, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
+    st.markdown('**(*) Important Note**: _Modules which are graded on a CS/CU may or have MCs assigned to them. While some of these modules may be essential degree requirements, they are not factored into the calculation of CAP **at all**. Likewise, modules which have 0 MCs but are essential degree requirements are also not factored into the calculation of CAP. Lastly, other grades not in the range of A+ to F (such as W for Withdrawn, IC for Incomplete, modules which have been S/Ued etc.) also do not factor into the calculation of CAP._')
     
     st.markdown('---')
     
