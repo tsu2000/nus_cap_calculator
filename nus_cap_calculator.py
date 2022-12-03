@@ -392,8 +392,11 @@ def future(unique_mcs):
         
     with stats_col:
         st.markdown(f"No. of Module Credits Added: &emsp; &emsp; &emsp; **{sum(st.session_state['new_mc_count'])}**")
+        
+        if st.session_state['predicted_mod'] != []:
+            compute_new_cap = st.button('Compute new CAP')
  
-        if st.button('Compute new CAP'):
+        if compute_new_cap:
             grade2pt_arr = np.array([valid_grades_to_cap[key] for key in st.session_state['new_grade_count']])
             new_mcs_arr = np.array(st.session_state['new_mc_count'])
             
