@@ -313,7 +313,7 @@ def calc(data, yr_1, yr_2, now):
 def future(unique_mcs):
     st.markdown('#### :question: &nbsp; Future CAP Calculation')
 
-    st.markdown('This feature allows users to calculate how their current CAP will change with the addition of new modules with different grades and module credits.')
+    st.markdown('This feature allows users to calculate how their current CAP will change with the addition of new modules through input of additional grade points and module credits.')
     
     if 'predicted_mod' not in st.session_state:
         st.session_state['predicted_mod'] = []
@@ -327,10 +327,10 @@ def future(unique_mcs):
     cap_col, mc_col = st.columns([1, 1]) 
     
     with cap_col:
-        current_cap = st.number_input('Current CAP:', min_value = 0.00, max_value = 5.00, value = 3.50, step = 0.01)
+        current_cap = st.number_input('Current CAP (If any):', min_value = 0.00, max_value = 5.00, value = 0.00, step = 0.01)
         
     with mc_col:
-        total_mcs = st.number_input('Number of MCs used to calculate current CAP:', min_value = 0.0, max_value = 160.0, value = 20.0, step = 0.5)
+        total_mcs = st.number_input('Number of MCs used to calculate current CAP (If any):', min_value = 0.0, max_value = 160.0, value = 0.0, step = 0.5)
     
     st.markdown('---')    
     st.markdown('##### Select additional modules with their respective grades:')
