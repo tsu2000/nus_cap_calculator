@@ -462,7 +462,7 @@ def sense(unique_mcs):
         
         
 def explain():
-    st.markdown('#### :bulb: &nbsp; CAP Calculation Explanation')
+    st.title('#### :bulb: &nbsp; CAP Calculation Explanation')
 
     st.markdown('This feature describes how Cumulative Average Point (CAP) at NUS is calculated in detail.')
 
