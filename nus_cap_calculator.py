@@ -396,15 +396,15 @@ def future(unique_mcs):
         if st.session_state['predicted_mod'] != []:
             compute_new_cap = st.button('Compute new CAP')
  
-        if compute_new_cap:
-            grade2pt_arr = np.array([valid_grades_to_cap[key] for key in st.session_state['new_grade_count']])
-            new_mcs_arr = np.array(st.session_state['new_mc_count'])
-            
-            new_cap = ((current_cap * total_mcs) + sum(grade2pt_arr * new_mcs_arr)) / (total_mcs + sum(new_mcs_arr))
-            new_mcs = total_mcs + sum(new_mcs_arr)
-            
-            st.markdown(f'New CAP after computation: &emsp; &emsp; &emsp; &emsp; &emsp; &nbsp; **{round(new_cap, 2)}**')
-            st.markdown(f'MCs used to calculate new CAP: &emsp; &emsp; &emsp; **{round(new_mcs, 2)}**')
+            if compute_new_cap:
+                grade2pt_arr = np.array([valid_grades_to_cap[key] for key in st.session_state['new_grade_count']])
+                new_mcs_arr = np.array(st.session_state['new_mc_count'])
+
+                new_cap = ((current_cap * total_mcs) + sum(grade2pt_arr * new_mcs_arr)) / (total_mcs + sum(new_mcs_arr))
+                new_mcs = total_mcs + sum(new_mcs_arr)
+
+                st.markdown(f'New CAP after computation: &emsp; &emsp; &emsp; &emsp; &emsp; &nbsp; **{round(new_cap, 2)}**')
+                st.markdown(f'MCs used to calculate new CAP: &emsp; &emsp; &emsp; **{round(new_mcs, 2)}**')
            
             
 def sense(unique_mcs):
