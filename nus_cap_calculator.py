@@ -462,13 +462,13 @@ def sense(unique_mcs):
         
         
 def explain():
-    st.title('#### :bulb: &nbsp; CAP Calculation Explanation')
+    st.markdown('#### :bulb: &nbsp; CAP Calculation Explanation')
 
     st.markdown('This feature describes how Cumulative Average Point (CAP) at NUS is calculated in detail.')
 
     st.markdown('---')
     
-    st.markdown('###### To calculate the CAP for $n$ number of modules:')
+    st.markdown('To calculate the CAP for $n$ number of modules:')
     st.write('&nbsp;')
     
     st.markdown(r'''$G = \text{Module Grade Points}$''')
