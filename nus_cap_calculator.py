@@ -469,20 +469,20 @@ def explain():
     st.markdown('---')
     
     st.markdown('###### To calculate the CAP for $n$ number of modules:')
-    st.markdown('###')
+    st.write('&nbsp;')
     
     st.markdown(r'''$G = \text{Module Grade Points}$''')
     st.markdown(r'''$G_n = \text{Specific Module Grade Points for the } n^\text{th} \text{ module used in CAP calculation}$''')
     st.markdown(r'''$MC = \text{Module Credits}$''')
     st.markdown(r'''$MC_n = \text{Specific Module Credits for the } n^\text{th} \text{ module used in CAP calculation}$''')
     
-    st.markdown('###')
+    st.write('&nbsp;')
     
     st.latex(r'''\text{CAP} = \frac{G_1\times{MC_1} + G_2\times{MC_2} + ... + G_n\times{MC_n}}{MC_1 + MC_2 + ... + MC_n}''')
    
     st.latex(r'''= \sum\limits_{i=1}^{n} \frac{{G_i}\times{MC_i}}{MC_i}''')
     
-    st.markdown('###')
+    st.markdown('&nbsp;')
     
     st.markdown('Each module taken at NUS is usually graded on a modular basis, meaning that each module has a fixed number of Module Credits (or MCs), and that each letter grade given after the completion of a module corresponds to a specific number of grade points. To get your Cumulative Average Points or CAP, simply do the following:')
                 
