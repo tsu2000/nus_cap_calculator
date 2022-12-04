@@ -16,32 +16,41 @@ from collections import Counter
 
 
 @st.experimental_singleton
-def get_initial_data():
+def get_initial_data(rel_years):
     # Obtaining up-to-date data for application
-    now = datetime.datetime.now()
 
-    current_yr = int(now.strftime('%Y'))
-    current_mth_day = now.strftime('%m-%d')
-
-    if current_mth_day < "08-06":
-        yr_1, yr_2 = current_yr - 1, current_yr
-
-    elif current_mth_day >= "08-06":
-        yr_1, yr_2 = current_yr, current_yr + 1
-
-    api_url = f'https://api.nusmods.com/v2/{yr_1}-{yr_2}/moduleInfo.json'
+    api_url = f'https://api.nusmods.com/v2/{rel_years}/moduleInfo.json'
     data = requests.get(api_url).json()
 
     unique_mcs = sorted(list(set([float(module['moduleCredit']) for module in data if float(module['moduleCredit']) > 0])))
     
-    return data, unique_mcs, yr_1, yr_2, now
+    return data, unique_mcs 
 
 
 def main():
     st.title('NUS Module CAP Calculator')
-    
+
+    # Obtain relevant years for modules
+    now = datetime.datetime.now()
+
+    current_year = int(now.strftime('%Y'))
+    current_mth_day = now.strftime('%m-%d')
+
+    if current_mth_day < '08-06':
+        options = [f'AY {yr-1}/{yr}' for yr in np.arange(2019, current_year+1)]
+
+    elif current_mth_day >= '08-06':
+        options = [f'AY {yr}/{yr+1}' for yr in np.arange(2018, current_year+1)]
+
+    # Create sidebar with options
     with st.sidebar:   
         st.header(':twisted_rightwards_arrows: &nbsp; Navigation Bar')
+
+        opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
+
+        year_1, year_2 = opt[3:7], opt[8:]
+        mod_years = f'{year_1}-{year_2}'
+
         feature = st.radio('Select a feature:', ['Current CAP Analysis', 
                                                  'Future CAP Calculation', 
                                                  'CAP Sensitivity', 
@@ -54,13 +63,16 @@ def main():
     
     # Select option
     if feature == 'Current CAP Analysis':
-        calc(data = get_initial_data()[0], yr_1 = get_initial_data()[2], yr_2 = get_initial_data()[3], now = get_initial_data()[4])
+        calc(data = get_initial_data(mod_years)[0],
+             yr_1 = year_1, 
+             yr_2 = year_2, 
+             now = now)
         
     elif feature == 'Future CAP Calculation':
-        future(unique_mcs = get_initial_data()[1])
+        future(unique_mcs = get_initial_data(mod_years)[1])
         
     elif feature == 'CAP Sensitivity':
-        sense(unique_mcs = get_initial_data()[1])
+        sense(unique_mcs = get_initial_data(mod_years)[1])
         
     elif feature == 'CAP Calculation Explanation':
         explain()
@@ -69,7 +81,7 @@ def main():
 def calc(data, yr_1, yr_2, now):
     st.markdown('#### :bar_chart: &nbsp; Current CAP Analysis')
 
-    st.markdown('This feature allows users to select modules as listed in NUSMods for the current Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
+    st.markdown('This feature allows users to select modules as listed in NUSMods for a selected Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
 
     st.markdown('---')
 
