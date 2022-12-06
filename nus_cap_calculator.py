@@ -66,7 +66,8 @@ def main():
         calc(data = get_initial_data(mod_years)[0],
              yr_1 = year_1, 
              yr_2 = year_2, 
-             now = now)
+             now = now,
+             mod_years = mod_years)
         
     elif feature == 'Future CAP Calculation':
         future(unique_mcs = get_initial_data(mod_years)[1])
@@ -78,7 +79,7 @@ def main():
         explain()
     
     
-def calc(data, yr_1, yr_2, now):
+def calc(data, yr_1, yr_2, now, mod_years):
     st.markdown('#### :bar_chart: &nbsp; Current CAP Analysis')
 
     st.markdown('This feature allows users to select modules as listed in NUSMods for a selected Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
@@ -113,11 +114,13 @@ def calc(data, yr_1, yr_2, now):
 
     mc_dict = {module['moduleCode']: [module['title'], float(module['moduleCredit'])] for module in data}
 
-    selected_mod = st.selectbox(f'Select a module you have taken from the list: - (Current AY: {yr_1}/{yr_2})', 
+    selected_mod = st.selectbox(f'Select a module you have taken from the list - (AY {yr_1}/{yr_2}):', 
                                 mc_dict,
                                 format_func = lambda key: key + f' - {str(mc_dict[key][0])} [{str(mc_dict[key][1])} MCs]')
 
     selected_grade = st.selectbox('Select grade you have obtained for the respective module:', grades_to_cap)
+
+    final_mod_years = mod_years[:4] + '/' + mod_years[5:]
 
     def results(mod_code, grade):
         mod_title = mc_dict[mod_code][0]
@@ -131,7 +134,7 @@ def calc(data, yr_1, yr_2, now):
     with amb_col:
         amb = st.button('Add Module')
         if amb: #and selected_mod not in st.session_state.mod_list:
-            st.session_state.all_module_data.append(results(selected_mod, selected_grade))
+            st.session_state.all_module_data.append(results(selected_mod, selected_grade) + [final_mod_years])
 
     with rmb_col:
         rmb = st.button(u'\u21ba')
@@ -145,14 +148,13 @@ def calc(data, yr_1, yr_2, now):
 
 
     st.session_state.mod_list = [st.session_state['all_module_data'][x][0] for x in range(0, len(st.session_state['all_module_data']))]
-  
 
-    df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points'],
+    df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points', 'AY Taken'],
                       data = st.session_state['all_module_data'])
 
     st.markdown('###### Add a module and grade to view and download the data table:')
     if st.session_state['all_module_data'] != []:
-        st.dataframe(df.style.format(precision = 1))
+        st.dataframe(df.style.format(precision = 1,))
 
     analysis_col, export_col = st.columns([1, 0.265]) 
 
@@ -175,10 +177,18 @@ def calc(data, yr_1, yr_2, now):
                 }
             )
 
-            c_string_template = workbook.add_format(
+            grade_template = workbook.add_format(
                 {
                     'font_color': font_color, 
-                    'align': 'center'
+                    'align': 'center',
+                    'bold': True
+                }
+            )
+
+            ay_template = workbook.add_format(
+                {
+                    'font_color': font_color, 
+                    'align': 'right'
                 }
             )
 
@@ -197,16 +207,20 @@ def calc(data, yr_1, yr_2, now):
             )
 
             column_formats = {
-                'A': [string_template, 12.5],
-                'B': [string_template, 60],
-                'C': [float_template, 12.5],
-                'D': [c_string_template, 12.5],
-                'E': [float_template, 12.5]
+                'A': [string_template, 15],
+                'B': [string_template, 50],
+                'C': [float_template, 15],
+                'D': [grade_template, 15],
+                'E': [float_template, 15],
+                'F': [ay_template, 15]
             }
 
             for column in column_formats.keys():
                 worksheet.set_column(f'{column}:{column}', column_formats[column][1], column_formats[column][0])
                 worksheet.conditional_format(f'{column}1:{column}1', {'type': 'no_errors', 'format': header_template})
+
+            # Automatically apply Filter function on shape of dataframe
+            worksheet.autofilter(0, 0, df.shape[0], df.shape[1]-1)
 
             # Saving and returning data
             writer.save()
