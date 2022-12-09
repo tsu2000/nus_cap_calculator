@@ -13,6 +13,7 @@ import requests
 import datetime
 
 from collections import Counter
+from PIL import Image
 
 
 @st.experimental_singleton
@@ -28,7 +29,14 @@ def get_initial_data(rel_years):
 
 
 def main():
-    st.title('NUS Module CAP Calculator')
+    col1, col2 = st.columns([0.034, 0.265])
+
+    with col1:
+        image = Image.open('nus.png')
+        st.image(image, output_format = 'png')
+
+    with col2:
+        st.title('&nbsp; NUS Module CAP Calculator')
 
     # Obtain relevant years for modules
     now = datetime.datetime.now()
