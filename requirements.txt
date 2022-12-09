@@ -9,3 +9,4 @@ requests==2.26.0
 datetime==4.5
 kaleido==0.2.1
 openpyxl==3.0.9
+Pillow==8.4.0
