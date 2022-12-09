@@ -32,7 +32,7 @@ def main():
     col1, col2 = st.columns([0.034, 0.265])
     
     with col1:
-        url = 'https://github.com/tsu2000/nus_cap_calculator/blob/main/nus.png'
+        url = 'https://github.com/tsu2000/nus_cap_calculator/raw/main/nus.png'
         response = requests.get(url)
         img = Image.open(io.BytesIO(response.content))
         st.image(img, output_format = 'png')
