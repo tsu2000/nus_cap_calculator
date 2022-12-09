@@ -89,8 +89,8 @@ def calc(data, yr_1, yr_2, now, mod_years):
     if 'all_module_data' not in st.session_state:
         st.session_state['all_module_data'] = []
 
-    if 'mod_list' not in st.session_state:
-        st.session_state['mod_list'] = []
+    if 'upload_status' not in st.session_state:
+        st.session_state['upload_status'] = False
 
     grades_to_cap = {'A+': 5.0,
                      'A': 5.0,
@@ -133,7 +133,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
 
     with amb_col:
         amb = st.button('Add Module')
-        if amb: #and selected_mod not in st.session_state.mod_list:
+        if amb:
             st.session_state.all_module_data.append(results(selected_mod, selected_grade) + [final_mod_years])
 
     with rmb_col:
@@ -146,15 +146,25 @@ def calc(data, yr_1, yr_2, now, mod_years):
         if clear:
             st.session_state['all_module_data'] = []
 
+    # Functionality to add mdoules to existing spreadsheet
+    upload_xlsx = st.file_uploader('Or, upload an existing .xlsx file with recorded modules in the same format:')
 
-    st.session_state.mod_list = [st.session_state['all_module_data'][x][0] for x in range(0, len(st.session_state['all_module_data']))]
+    if upload_xlsx is not None and st.session_state['upload_status'] == False:
+        df_upload = pd.read_excel(upload_xlsx)
+        for row in range(len(df_upload)):
+            st.session_state.all_module_data.append([i for i in df_upload.iloc[row]])
+        st.session_state['upload_status'] = True
+
+    elif upload_xlsx is None:
+        st.session_state['upload_status'] = False
 
     df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points', 'AY Taken'],
                       data = st.session_state['all_module_data'])
 
     st.markdown('###### Add a module and grade to view and download the data table:')
+
     if st.session_state['all_module_data'] != []:
-        st.dataframe(df.style.format(precision = 1,))
+        st.dataframe(df.style.format(precision = 1))
 
     analysis_col, export_col = st.columns([1, 0.265]) 
 
