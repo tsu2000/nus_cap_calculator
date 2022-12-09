@@ -30,10 +30,12 @@ def get_initial_data(rel_years):
 
 def main():
     col1, col2 = st.columns([0.034, 0.265])
-
+    
     with col1:
-        image = Image.open('nus.png')
-        st.image(image, output_format = 'png')
+        url = 'https://github.com/tsu2000/nus_cap_calculator/blob/main/nus.png'
+        response = requests.get(url)
+        img = Image.open(io.BytesIO(response.content))
+        st.image(img, output_format = 'png')
 
     with col2:
         st.title('&nbsp; NUS Module CAP Calculator')
