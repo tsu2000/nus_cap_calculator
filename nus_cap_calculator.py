@@ -54,8 +54,8 @@ def main():
     # Create sidebar with options
     with st.sidebar:   
         
-        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar &nbsp; :round_pushpin:')
-        st.markdown('---')
+        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :round_pushpin:')
+        st.write('##')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
 
@@ -393,7 +393,7 @@ def future(unique_mcs):
         total_mcs = st.number_input('Number of MCs used to calculate current CAP (If any):', min_value = 0.0, max_value = 160.0, value = 0.0, step = 0.5)
     
     st.markdown('---')    
-    st.markdown('##### Select additional modules with their respective grades:')
+    st.markdown('##### Select additional modules with their respective grades and MCs:')
     
     add_mod_grade_col, add_mod_mc_col = st.columns([1, 1])
     
@@ -448,7 +448,7 @@ def future(unique_mcs):
     with df_col:
         st.markdown('###### Table of Modules with respective grades and MCs:')
         if st.session_state['predicted_mod'] != []:
-            st.dataframe(df)
+            st.table(df)
         
     with stats_col:
         st.markdown(f"No. of Module Credits Added: &emsp; &emsp; &emsp; **{sum(st.session_state['new_mc_count'])}**")
@@ -463,8 +463,31 @@ def future(unique_mcs):
                 new_cap = ((current_cap * total_mcs) + sum(grade2pt_arr * new_mcs_arr)) / (total_mcs + sum(new_mcs_arr))
                 new_mcs = total_mcs + sum(new_mcs_arr)
 
-                st.markdown(f'New CAP after computation: &emsp; &emsp; &emsp; &emsp; &emsp; &nbsp; **{round(new_cap, 2)}**')
-                st.markdown(f'MCs used to calculate new CAP: &emsp; &emsp; &emsp; **{round(new_mcs, 2)}**')
+                fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
+                                    header = dict(values = ['<b>New CAP Stats<b>', 
+                                                            '<b>Result<b>'],
+                                                fill_color = 'lightcoral',
+                                                line_color = 'black',
+                                                align = 'center',
+                                                font = dict(color = 'black', 
+                                                            size = 14,
+                                                            family = 'Georgia')),
+                                    cells = dict(values = [['New CAP after computation',
+                                                            'New CAP (To 4 d.p.)',
+                                                            'MCs used to calculate new CAP'],
+                                                            [round(new_cap, 2),
+                                                             round(new_cap, 4),
+                                                             round(new_mcs, 2)]], 
+                                                fill_color = 'wheat',
+                                                line_color = 'black',
+                                                align = ['left', 'center'],
+                                                font = dict(color = 'black', 
+                                                            size = [14, 14],
+                                                            family = ['Georgia', 'Georgia Bold']),
+                                                height = 25))])
+                
+                fig.update_layout(height = 170, width = 200, margin = dict(l = 5, r = 5, t = 5, b = 5))
+                st.plotly_chart(fig, use_container_width = True)
            
             
 def sense(unique_mcs):
