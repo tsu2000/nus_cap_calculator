@@ -19,7 +19,6 @@ from PIL import Image
 @st.experimental_singleton
 def get_initial_data(rel_years):
     # Obtaining up-to-date data for application
-
     api_url = f'https://api.nusmods.com/v2/{rel_years}/moduleInfo.json'
     data = requests.get(api_url).json()
 
@@ -32,7 +31,7 @@ def main():
     col1, col2 = st.columns([0.034, 0.265])
     
     with col1:
-        url = 'https://github.com/tsu2000/nus_cap_calculator/raw/main/nus.png'
+        url = 'https://github.com/tsu2000/nus_cap_calculator/raw/main/images/nus.png'
         response = requests.get(url)
         img = Image.open(io.BytesIO(response.content))
         st.image(img, output_format = 'png')
@@ -54,7 +53,9 @@ def main():
 
     # Create sidebar with options
     with st.sidebar:   
-        st.header(':twisted_rightwards_arrows: &nbsp; Navigation Bar')
+        
+        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar &nbsp; :round_pushpin:')
+        st.markdown('---')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
 
@@ -64,13 +65,25 @@ def main():
         feature = st.radio('Select a feature:', ['Current CAP Analysis', 
                                                  'Future CAP Calculation', 
                                                  'CAP Sensitivity', 
-                                                 'CAP Calculation Explanation'])                            
-        st.markdown('***')
-        st.header(':male-technologist: &nbsp; View Source Code &nbsp; :female-technologist:')
+                                                 'CAP Calculation Explanation'])   
+
+        st.markdown('---')                         
+        st.markdown('#### :male-technologist: &nbsp; View Source Code (GitHub) &nbsp; :female-technologist:')
         st.components.v1.html("""<a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/static/v1?label=tsu2000&message=nus_cap_calculator
-    &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/nus_cap_calculator?style=social" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
-                        height = 28)                                                  
-    
+    &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/nus_cap_calculator.svg?style=social&label=Star&maxAge=2592000" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
+                        height = 28)
+
+        st.markdown('---')       
+        col_a, col_b = st.columns([1.3, 0.9])
+
+        with col_a:
+            st.markdown('This app is powered by:')
+        with col_b:
+            url2 = 'https://github.com/tsu2000/nus_cap_calculator/raw/main/images/nusmods_banner.png'
+            response = requests.get(url2)
+            img = Image.open(io.BytesIO(response.content))
+            st.image(img, use_column_width = True, output_format = 'png')
+
     # Select option
     if feature == 'Current CAP Analysis':
         calc(data = get_initial_data(mod_years)[0],
@@ -92,7 +105,7 @@ def main():
 def calc(data, yr_1, yr_2, now, mod_years):
     st.markdown('#### :bar_chart: &nbsp; Current CAP Analysis')
 
-    st.markdown('This feature allows users to select modules as listed in NUSMods for a selected Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
+    st.markdown('This feature allows users to select modules as listed in NUSMods for a selected Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their analysis as a PDF file and selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
 
     st.markdown('---')
 
@@ -124,7 +137,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
 
     mc_dict = {module['moduleCode']: [module['title'], float(module['moduleCredit'])] for module in data}
 
-    selected_mod = st.selectbox(f'Select a module you have taken from the list - (AY {yr_1}/{yr_2}):', 
+    selected_mod = st.selectbox(f'Select a module you have taken from the list - (For AY {yr_1}/{yr_2}):', 
                                 mc_dict,
                                 format_func = lambda key: key + f' - {str(mc_dict[key][0])} [{str(mc_dict[key][1])} MCs]')
 
@@ -173,9 +186,10 @@ def calc(data, yr_1, yr_2, now, mod_years):
 
     st.markdown('###### Add a module and grade to view and download the data table:')
 
+    # Display module data in DataFrame
     if st.session_state['all_module_data'] != []:
-        st.dataframe(df.style.format(precision = 1))
-
+        st.dataframe(df.style.format(precision = 1), use_container_width = True)
+        
     analysis_col, export_col = st.columns([1, 0.265]) 
 
     with export_col:
@@ -456,7 +470,7 @@ def future(unique_mcs):
 def sense(unique_mcs):
     st.markdown('#### :thermometer: &nbsp; CAP Sensitivity')
     
-    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module with differing grades and module credits, from the stated current CAP and module credits.")
+    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module with differing grades and module credits, using the stated current CAP and module credits.")
 
     cap_col, mc_col = st.columns([1, 1]) 
     
@@ -490,7 +504,7 @@ def sense(unique_mcs):
     
     def future_plotting(cap_type, chart_type, df_type):
     
-        fig, ax = plt.subplots(figsize = (12, 12), dpi = 100)
+        fig, ax = plt.subplots(figsize = (12, 12), dpi = 300)
 
         sns.heatmap(df_type, annot = True, fmt = '.3f', linewidth = 0.25, cmap = f'{chart_type}') 
         ax.xaxis.tick_top()
@@ -499,7 +513,7 @@ def sense(unique_mcs):
 
         return st.pyplot(fig)
 
-    plottype = st.radio('Choose visualisation type:', ['Show new CAP', 'Show change in CAP'])
+    plottype = st.radio('Choose visualisation type:', ['Show change in CAP', 'Show new CAP'])
     
     if plottype == 'Show new CAP':
         future_plotting('New CAP with intial CAP of ', 'gray', cap_1_more_mod_df)
@@ -550,4 +564,5 @@ def explain():
     
     
 if __name__ == "__main__":
+    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '📝')
     main()
