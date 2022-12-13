@@ -14,6 +14,7 @@ import datetime
 
 from collections import Counter
 from PIL import Image
+from streamlit_extras.badges import badge
 
 
 @st.experimental_singleton
@@ -28,7 +29,7 @@ def get_initial_data(rel_years):
 
 
 def main():
-    col1, col2 = st.columns([0.034, 0.265])
+    col1, col2, col3 = st.columns([0.034, 0.265, 0.035])
     
     with col1:
         url = 'https://github.com/tsu2000/nus_cap_calculator/raw/main/images/nus.png'
@@ -38,6 +39,9 @@ def main():
 
     with col2:
         st.title('&nbsp; NUS Module CAP Calculator')
+
+    with col3:
+        badge(type = 'github', name = 'tsu2000/nus_cap_calculator', url = 'https://github.com/tsu2000/nus_cap_calculator')
 
     # Obtain relevant years for modules
     now = datetime.datetime.now()
@@ -52,10 +56,9 @@ def main():
         options = [f'AY {yr}/{yr+1}' for yr in np.arange(2018, current_year+1)]
 
     # Create sidebar with options
-    with st.sidebar:   
-        
+    with st.sidebar:  
         st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :round_pushpin:')
-        st.write('##')
+        st.markdown('####')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
 
@@ -67,13 +70,12 @@ def main():
                                                  'CAP Sensitivity', 
                                                  'CAP Calculation Explanation'])   
 
-        st.markdown('---')                         
-        st.markdown('#### :male-technologist: &nbsp; View Source Code (GitHub) &nbsp; :female-technologist:')
-        st.components.v1.html("""<a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/static/v1?label=tsu2000&message=nus_cap_calculator
-    &color=blue&logo=github" alt="_blank"></a><a href="https://github.com/tsu2000/nus_cap_calculator" target="_blank"><img src="https://img.shields.io/github/stars/tsu2000/nus_cap_calculator.svg?style=social&label=Star&maxAge=2592000" alt="tsu2000 - NUS Module CAP Calculator"></a>""", 
-                        height = 28)
+        st.write('#')
+        st.write('#')
+        st.write('##')
 
-        st.markdown('---')       
+        st.markdown('---')     
+
         col_a, col_b = st.columns([1.3, 0.9])
 
         with col_a:
@@ -83,6 +85,7 @@ def main():
             response = requests.get(url2)
             img = Image.open(io.BytesIO(response.content))
             st.image(img, use_column_width = True, output_format = 'png')
+
 
     # Select option
     if feature == 'Current CAP Analysis':
