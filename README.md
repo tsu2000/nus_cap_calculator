@@ -6,4 +6,7 @@ A simple web application that is geared toward students of NUS (National Univers
 - View the sensitivity of their current CAP as a heatmap.
 - View a brief explanation of how CAP at NUS is calculated.
 
-**Link to Web App**: https://tsu2000-nus-cap-calculator-nus-cap-calculator-6goyc5.streamlit.app
+**Link to Web App**:
+
+[<img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg">](<https://tsu2000-nus-cap-calculator-nus-cap-calculator-6goyc5.streamlit.app>)
+
