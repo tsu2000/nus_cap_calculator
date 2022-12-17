@@ -8,5 +8,6 @@ A simple web application that is geared toward students of NUS (National Univers
 
 **Link to Web App**:
 
-[<img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg">](<https://tsu2000-nus-cap-calculator-nus-cap-calculator-6goyc5.streamlit.app>)
+[<img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg">](<https://nus-cap.streamlit.app>)
+
 
