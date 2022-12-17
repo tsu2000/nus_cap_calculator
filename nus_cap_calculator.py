@@ -71,7 +71,7 @@ def main():
                                                  'CAP Calculation Explanation'])   
 
         st.write('#')
-        st.write('#')
+        st.write('##')
         st.write('##')
 
         st.markdown('---')     
@@ -85,7 +85,6 @@ def main():
             response = requests.get(url2)
             img = Image.open(io.BytesIO(response.content))
             st.image(img, use_column_width = True, output_format = 'png')
-
 
     # Select option
     if feature == 'Current CAP Analysis':
@@ -287,8 +286,8 @@ def calc(data, yr_1, yr_2, now, mod_years):
     if analysis and st.session_state['all_module_data'] != []:
 
         df2 = df.dropna()
-
         cap = sum(df2['No. of MCs'] * df2['Grade Points']) / sum(df2['No. of MCs'])
+        total_mcs_cap = sum(df2['No. of MCs'])
 
         final_cap = round(cap, 2)
         dp4_cap = round(cap, 4)
@@ -307,31 +306,32 @@ def calc(data, yr_1, yr_2, now, mod_years):
         else:
             degree_class = 'Below requirements for graduation'
 
-        total_mcs = sum(df['No. of MCs'])
-        total_mcs_cap = sum(df2['No. of MCs'])
+        mcs_not_counted = df.loc[(df['Grade'] == 'U') | (df['Grade'] == 'CU') | (df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')]
+
+        total_completed_mcs = sum(df['No. of MCs']) - sum(mcs_not_counted['No. of MCs'])
 
         # Cumulative modules
         complete_total_mods = len(df)
         conv_mods = len(df2)
         sued_mods = len(df.loc[(df['Grade'] == 'U') | (df['Grade'] == 'S')])
         cscu_mods = len(df.loc[(df['Grade'] == 'CU') | (df['Grade'] == 'CS')])
-        zero_mods = len(df.loc[df['No. of MCs'] == 0])
-        weird_mods = len(df.loc[(df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')])
+        unrq_mods = len(df.loc[(df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')])
 
         table_dict = {'Final CAP': final_cap,
-                        'Degree Classification': degree_class,
-                        'Your CAP (To 4 d.p.)': dp4_cap,
-                        'Total No. of MCs used to calculate CAP': total_mcs_cap,
-                        'Total No. of MCs attempted': total_mcs,
-                        'Total No. of modules attempted': complete_total_mods,
-                        'No. of modules accounted for in CAP': conv_mods,
-                        'No. of modules which were S/Ued': sued_mods,
-                        'No. of CS/CU modules taken': cscu_mods,
-                        "No. of modules with a 'EXE', 'IC', 'IP' or 'W' grade": weird_mods,
-                        'Date of Overview': now.strftime('%Y-%m-%d')}
+                      'Degree Classification': degree_class,
+                      'Your CAP (To 4 d.p.)': dp4_cap,
+                      'No. of MCs used to calculate CAP': total_mcs_cap,
+                      'Total No. of MCs completed successfully': total_completed_mcs,
+                      'Total No. of modules attempted (A + B + C + D)': complete_total_mods,
+                      'No. of modules accounted for in CAP (A)': conv_mods,
+                      'No. of modules which were S/Ued (B)': sued_mods,
+                      'No. of CS/CU modules taken (C)': cscu_mods,
+                      "No. of modules with a 'EXE', 'IC', 'IP' or 'W' grade (D)": unrq_mods,
+                      'Date of Overview': now.strftime('%d %b %Y')}
 
-        col_fill_colors = ['lightcyan']*2 + ['white']*8 + ['gainsboro']
-        font_colors = ['crimson']*2 + ['black']*8 + ['darkgreen']
+        col_fill_colors = ['azure']*2 + ['lavender']*3 + ['cornsilk']*5 + ['honeydew']
+        font_colors = ['mediumblue']*2 + ['indigo']*3 + ['saddlebrown']*5 + ['darkgreen']
+        #['mediumblue']*2 + ['black']*8 + ['darkgreen']
 
         fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
                                     header = dict(values = ['<b>Module Overview & Detailed Analysis<b>', 
@@ -352,7 +352,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
                                                             family = ['Georgia', 'Georgia Bold']),
                                                 height = 25))])
 
-        fig.update_layout(height = 325, width = 700, margin = dict(l = 5, r = 5, t = 5, b = 5))
+        fig.update_layout(height = 318, width = 700, margin = dict(l = 5, r = 5, t = 5, b = 5))
         st.plotly_chart(fig, use_container_width = True)
 
         # Create an in-memory buffer
@@ -376,7 +376,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
 def future(unique_mcs):
     st.markdown('#### :question: &nbsp; Future CAP Calculation')
 
-    st.markdown('This feature allows users to calculate how their current CAP will change with the addition of new modules through input of additional grade points and module credits.')
+    st.markdown('This fearure lets users to calculate calculate their future CAP will change from their current CAP (if any) through input of additional dummy modules with their respective grade points and module credits.')
     
     if 'predicted_mod' not in st.session_state:
         st.session_state['predicted_mod'] = []
@@ -496,7 +496,7 @@ def future(unique_mcs):
 def sense(unique_mcs):
     st.markdown('#### :thermometer: &nbsp; CAP Sensitivity')
     
-    st.markdown("This feature aims to provide an overview on how much your CAP changes by upon the addition of a single module with differing grades and module credits, using the stated current CAP and module credits.")
+    st.markdown("This feature aims to answer the question: **How much can my CAP change with the addition of a single module?** Users can input their current CAP and MCs to view the sensitivity of their CAP.")
 
     cap_col, mc_col = st.columns([1, 1]) 
     
