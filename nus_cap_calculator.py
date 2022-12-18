@@ -591,5 +591,5 @@ def explain():
     
     
 if __name__ == "__main__":
-    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '🧮')
+    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '🏫')
     main()
