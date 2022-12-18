@@ -57,7 +57,7 @@ def main():
 
     # Create sidebar with options
     with st.sidebar:  
-        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :round_pushpin:')
+        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :world_map:')
         st.markdown('####')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
@@ -491,6 +491,7 @@ def future(unique_mcs):
                 
                 fig.update_layout(height = 170, width = 200, margin = dict(l = 5, r = 5, t = 5, b = 5))
                 st.plotly_chart(fig, use_container_width = True)
+    st.markdown('---')  
            
             
 def sense(unique_mcs):
