@@ -57,7 +57,7 @@ def main():
 
     # Create sidebar with options
     with st.sidebar:  
-        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :world_map:')
+        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar')
         st.markdown('####')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
@@ -591,5 +591,5 @@ def explain():
     
     
 if __name__ == "__main__":
-    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '📝')
+    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '🧮')
     main()
