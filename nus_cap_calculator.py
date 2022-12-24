@@ -172,7 +172,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
             st.session_state['all_module_data'] = []
 
     # Functionality to add mdoules to existing spreadsheet
-    upload_xlsx = st.file_uploader('Or, upload an existing .xlsx file with recorded modules in the same format:')
+    upload_xlsx = st.file_uploader('Or, upload an existing .xlsx file with recorded modules in the same format:', type = '.xlsx')
 
     if upload_xlsx is not None and st.session_state['upload_status'] == False:
         df_upload = pd.read_excel(upload_xlsx)
