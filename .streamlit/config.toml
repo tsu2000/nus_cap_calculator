@@ -1,9 +1,5 @@
 [theme]
-# Base theme
-base = 'light'
-
-# Background color for sidebar and most interactive widgets
-secondaryBackgroundColor = '#d3d9f3'
-
-# Font family for all text in the app, except code blocks
-font = 'sans serif'
+primaryColor="#c93e3e"
+backgroundColor="#c9fff9"
+secondaryBackgroundColor="#bfccf1"
+textColor="#000000"
