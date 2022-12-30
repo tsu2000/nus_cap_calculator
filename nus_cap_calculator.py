@@ -2,7 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+import altair as alt
 import plotly.graph_objects as go
 import plotly.io as pio
 
@@ -57,7 +57,7 @@ def main():
 
     # Create sidebar with options
     with st.sidebar:  
-        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar')
+        st.markdown('# :twisted_rightwards_arrows: &nbsp; Navigation Bar :round_pushpin:')
         st.markdown('####')
 
         opt = st.selectbox('Select an Academic Year (AY):', options, index = len(options)-1)
@@ -172,7 +172,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
             st.session_state['all_module_data'] = []
 
     # Functionality to add mdoules to existing spreadsheet
-    upload_xlsx = st.file_uploader('Or, upload an existing .xlsx file with recorded modules in the same format:', type = '.xlsx')
+    upload_xlsx = st.file_uploader('Or, upload an existing .xlsx file with recorded modules in the same format:')
 
     if upload_xlsx is not None and st.session_state['upload_status'] == False:
         df_upload = pd.read_excel(upload_xlsx)
@@ -331,7 +331,6 @@ def calc(data, yr_1, yr_2, now, mod_years):
 
         col_fill_colors = ['azure']*2 + ['lavender']*3 + ['cornsilk']*5 + ['honeydew']
         font_colors = ['mediumblue']*2 + ['indigo']*3 + ['saddlebrown']*5 + ['darkgreen']
-        #['mediumblue']*2 + ['black']*8 + ['darkgreen']
 
         fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
                                     header = dict(values = ['<b>Module Overview & Detailed Analysis<b>', 
@@ -491,7 +490,6 @@ def future(unique_mcs):
                 
                 fig.update_layout(height = 170, width = 200, margin = dict(l = 5, r = 5, t = 5, b = 5))
                 st.plotly_chart(fig, use_container_width = True)
-    st.markdown('---')  
            
             
 def sense(unique_mcs):
@@ -525,29 +523,96 @@ def sense(unique_mcs):
     
     # DataFrame for new CAP
     cap_1_more_mod_df = pd.DataFrame(df_mod, index = valid_grades_to_cap.keys()).T
+
+    cap_1_melted_df = cap_1_more_mod_df.reset_index().rename(columns = {'index': 'Module Credits'})
+    cap_1_melted_df = cap_1_melted_df.melt('Module Credits', var_name = 'Grade', value_name = 'New CAP')
     
     # DataFrame for change in CAP
     cap_change_df = cap_1_more_mod_df - current_cap
-    
-    def future_plotting(cap_type, chart_type, df_type):
-    
-        fig, ax = plt.subplots(figsize = (12, 12), dpi = 300)
 
-        sns.heatmap(df_type, annot = True, fmt = '.3f', linewidth = 0.25, cmap = f'{chart_type}') 
-        ax.xaxis.tick_top()
+    cap_cmelted_df = cap_change_df.reset_index().rename(columns = {'index': 'Module Credits'})
+    cap_cmelted_df = cap_cmelted_df.melt('Module Credits', var_name = 'Grade', value_name = 'Δin CAP')
 
-        plt.title(f'{cap_type}' + r'$\bf{' + str(round(current_cap, 2)) + '}$' + ' at ' + r'$\bf{' + str(total_mcs) + '}$' + ' MCs after addition of a single module', y = 1.035)
+    # Return Altair Heatmap
+    def future_plotting(cap_type, chart_scheme, df_type):
 
-        return st.pyplot(fig)
+        # Order chart
+        grade_order = df_type['Grade'].unique().tolist()
+        mod_order = df_type['Module Credits'].unique().tolist()
 
-    plottype = st.radio('Choose visualisation type:', ['Show change in CAP', 'Show new CAP'])
-    
-    if plottype == 'Show new CAP':
-        future_plotting('New CAP with intial CAP of ', 'gray', cap_1_more_mod_df)
+        # Define base chart
+        base_chart = alt.Chart(df_type).encode(
+            x = alt.X('Grade',
+                      sort = grade_order,
+                      axis = alt.Axis(orient = 'top')),
+            y = alt.Y('Module Credits',
+                      sort = mod_order)
+        ).properties(
+            title = f'{cap_type}' + str(round(current_cap, 2)) + ' at ' + str(total_mcs) + ' MCs after addition of a single module',
+            width = 700,
+            height = 800
+        )
+
+        # Define heatmap layer
+        if chart_scheme == 'red_to_green':
+            used_scheme = alt.Scale(domain = (df_type.iloc[:,2].min(),
+                                              0,
+                                              df_type.iloc[:,2].max()),
+                                              range = ['red', 'black', 'green'])
         
-    elif plottype == 'Show change in CAP':
-        future_plotting('Change in CAP of ', 'RdBu', cap_change_df)
-    
+        if chart_scheme == 'grayscale':
+            used_scheme = alt.Scale(domain = (df_type.iloc[:,2].min(),
+                                              current_cap,
+                                              df_type.iloc[:,2].max()),
+                                              range = ['grey', 'gainsboro', 'white'])
+
+        heatmap = base_chart.mark_rect().encode(
+            color = alt.Color(df_type.columns[2],
+                              scale = used_scheme
+            )
+        )
+
+        # Define text layer
+        if chart_scheme == 'red_to_green':
+            text_gradient = alt.Scale(domain = (df_type.iloc[:,2].min(), df_type.iloc[:,2].max()),
+                                      range = ['seashell', 'honeydew'])
+
+        elif chart_scheme == 'grayscale':
+            text_gradient = alt.Scale(domain = (df_type.iloc[:,2].min(),
+                                                current_cap,
+                                                df_type.iloc[:,2].max()),
+                                      range = ['maroon', 'black', 'green'])
+
+        text = base_chart.mark_text(baseline = 'middle').encode(
+            text = alt.Text(df_type.columns[2] + ':Q', format = ',.2f'),
+            color = alt.Color(df_type.columns[2],
+                              scale = text_gradient,
+                              legend = None)
+            #color = alt.condition(alt.datum[df_type.columns[2]] < 0, alt.value('#dddddd'), alt.value('#222222'))
+        )
+
+        # Setting up final object
+        final = (heatmap + text).configure_axisX(
+            labelAngle = 0
+            ).configure_title(
+                fontSize = 15,
+                offset = 15).configure_legend(
+                   labelLimit = 10
+                ).resolve_scale(
+                    color = 'independent'
+                )
+
+        return st.altair_chart(final, use_container_width = True)
+
+    # Switch between 2 different heatmaps
+    plottype = st.radio('Choose visualisation type:', ['Show change in CAP', 'Show new CAP'])
+
+    if plottype == 'Show change in CAP':
+        future_plotting('Change in CAP of ', 'red_to_green', cap_cmelted_df)    
+
+    elif plottype == 'Show new CAP':
+        future_plotting('New CAP with intial CAP of ', 'grayscale', cap_1_melted_df)
+
     st.markdown('---')
         
         
@@ -591,5 +656,5 @@ def explain():
     
     
 if __name__ == "__main__":
-    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '🏫')
+    st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '📝')
     main()
