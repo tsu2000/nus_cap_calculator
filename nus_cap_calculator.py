@@ -17,7 +17,7 @@ from PIL import Image
 from streamlit_extras.badges import badge
 
 
-@st.experimental_singleton
+@st.cache_resource
 def get_initial_data(rel_years):
     # Obtaining up-to-date data for application
     api_url = f'https://api.nusmods.com/v2/{rel_years}/moduleInfo.json'
