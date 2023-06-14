@@ -92,7 +92,8 @@ def main():
              yr_1 = year_1, 
              yr_2 = year_2, 
              now = now,
-             mod_years = mod_years)
+             mod_years = mod_years,
+             all_acad_years = options)
         
     elif feature == 'Future CAP Calculation':
         future(unique_mcs = get_initial_data(mod_years)[1])
@@ -104,7 +105,7 @@ def main():
         explain()
     
     
-def calc(data, yr_1, yr_2, now, mod_years):
+def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
     st.markdown('#### :bar_chart: &nbsp; Current CAP Analysis')
 
     st.markdown('This feature allows users to select modules as listed in NUSMods for a selected Academic Year (AY) to calculate their CAP and provides a brief analysis on the modules taken. It also allows users to download their analysis as a PDF file and selected module data to an Excel file. &nbsp; _**(View data source: [NUSMods API](https://api.nusmods.com/v2/))**_')
@@ -185,12 +186,23 @@ def calc(data, yr_1, yr_2, now, mod_years):
 
     df = pd.DataFrame(columns = ['Module Code', 'Module Title', 'No. of MCs', 'Grade', 'Grade Points', 'AY Taken'],
                       data = st.session_state['all_module_data'])
+    
+    # Change column categories
+    df['Grade'] = df['Grade'].astype('category')
+    df['Grade'] = pd.Categorical(df['Grade'], categories = list(grades_to_cap.keys()))
 
+    all_AY = [yr[3:] for yr in all_acad_years]
+
+    df['AY Taken'] = df['AY Taken'].astype('category')
+    df['AY Taken'] = pd.Categorical(df['AY Taken'], categories = all_AY)
+
+    # Show up-to-date dataframe
     st.markdown('###### Add a module and grade to view and download the data table:')
 
     # Display module data in DataFrame
     if st.session_state['all_module_data'] != []:
-        st.dataframe(df.style.format(precision = 1), use_container_width = True)
+        st.dataframe(df.style.format(precision = 1),
+                     use_container_width = True)
         
     analysis_col, export_col = st.columns([1, 0.265]) 
 
@@ -375,16 +387,7 @@ def calc(data, yr_1, yr_2, now, mod_years):
 def future(unique_mcs):
     st.markdown('#### :question: &nbsp; Future CAP Calculation')
 
-    st.markdown('This fearure lets users to calculate calculate their future CAP will change from their current CAP (if any) through input of additional dummy modules with their respective grade points and module credits.')
-    
-    if 'predicted_mod' not in st.session_state:
-        st.session_state['predicted_mod'] = []
-        
-    if 'new_grade_count' not in st.session_state:
-        st.session_state['new_grade_count'] = []  
-        
-    if 'new_mc_count' not in st.session_state:
-        st.session_state['new_mc_count'] = []
+    st.markdown('This feature lets users to calculate calculate their future CAP will change from their current CAP (if any) through input of additional dummy modules with their respective grade points and module credits.')
         
     cap_col, mc_col = st.columns([1, 1]) 
     
@@ -392,13 +395,13 @@ def future(unique_mcs):
         current_cap = st.number_input('Current CAP (If any):', min_value = 0.00, max_value = 5.00, value = 0.00, step = 0.01)
         
     with mc_col:
-        total_mcs = st.number_input('Number of MCs used to calculate current CAP (If any):', min_value = 0.0, max_value = 160.0, value = 0.0, step = 0.5)
+        current_mcs = st.number_input('Number of MCs used to calculate current CAP (If any):', min_value = 0.0, max_value = 500.0, value = 0.0, step = 0.5)
     
     st.markdown('---')    
     st.markdown('##### Select additional modules with their respective grades and MCs:')
-    
-    add_mod_grade_col, add_mod_mc_col = st.columns([1, 1])
-    
+
+    st.markdown('This dataframe is interactive! Click the bottom bar to add modules and select individual rows on the leftmost bar and press the delete or backspace button on your keyboard to delete a module.')
+
     valid_grades_to_cap = {'A+/A': 5.0,
                            'A-': 4.5, 
                            'B+': 4.0, 
@@ -408,88 +411,70 @@ def future(unique_mcs):
                            'C': 2.0, 
                            'D+': 1.5, 
                            'D': 1.0, 
-                           'F': 0.0}
+                           'F': 0.0,
+                           'S/U': None}
     
-    with add_mod_grade_col:
-        additional_mod_grade = st.selectbox('Choose additional Module Grade:', valid_grades_to_cap.keys(), index = 3)
-
-    with add_mod_mc_col:
-        additional_mod_mcs = st.selectbox('Choose additional Module Credits:', unique_mcs, index = 6)
-            
-    grade_w_mcs = f'Module w Grade: {additional_mod_grade} | MC: {additional_mod_mcs}'
-        
-    amb2_col, rmb2_col, clear2_col = st.columns([1, 4.2, 0.8]) 
-
-    with amb2_col:
-        amb2 = st.button('Add Module')
-        if amb2:
-            st.session_state['predicted_mod'].append(grade_w_mcs)
-            st.session_state['new_grade_count'].append(additional_mod_grade)
-            st.session_state['new_mc_count'].append(additional_mod_mcs)
-
-    with rmb2_col:
-        rmb2 = st.button(u'\u21ba')
-        if rmb2 and st.session_state['predicted_mod'] != []:
-            st.session_state['predicted_mod'].remove(st.session_state['predicted_mod'][-1])
-            st.session_state['new_grade_count'].remove(st.session_state['new_grade_count'][-1])
-            st.session_state['new_mc_count'].remove(st.session_state['new_mc_count'][-1])
-
-    with clear2_col:
-        clear2 = st.button('Clear All')
-        if clear2:
-            st.session_state['predicted_mod'] = []
-            st.session_state['new_grade_count'] = []
-            st.session_state['new_mc_count'] = []
-            
-    df = pd.DataFrame(columns = ['Count'],
-                      index = Counter(st.session_state['predicted_mod']).keys(),
-                      data = Counter(st.session_state['predicted_mod']).values())
+    data = {'Module Name': ['Sample Module 1', 'Sample Module 2', 'Sample Module 3', 'Sample Module 4', 'Sample Module 5'],
+            'Module Credits': [4, 4, 4, 4, 4],
+            'Module Grade': ['A+/A', 'A-', 'B+', 'B', 'C+']}
     
-    df_col, stats_col = st.columns([1, 1]) 
+    df = pd.DataFrame(data)
+
+    # Adjust column data types
+    df['Module Credits'] = df['Module Credits'].astype(float)
+    df['Module Grade'] = df['Module Grade'].astype('category')
+    df['Module Grade'] = df['Module Grade'].cat.add_categories(['B-', 'C', 'D+', 'D', 'F', 'S/U'])
+
+    annotated = st.data_editor(df, 
+                               column_config = {'Module Name': st.column_config.TextColumn(default = 'Another Sample Module', disabled = True),
+                                                'Module Credits': st.column_config.NumberColumn(default = 4.0, min_value = 0.5, max_value = 100, step = 0.5),
+                                                'Module Grade': st.column_config.SelectboxColumn(default = 'B+')}, 
+                               num_rows = 'dynamic', 
+                               use_container_width = True)
     
-    with df_col:
-        st.markdown('###### Table of Modules with respective grades and MCs:')
-        if st.session_state['predicted_mod'] != []:
-            st.table(df)
-        
-    with stats_col:
-        st.markdown(f"No. of Module Credits Added: &emsp; &emsp; &emsp; **{sum(st.session_state['new_mc_count'])}**")
-        
-        if st.session_state['predicted_mod'] != []:
-            compute_new_cap = st.button('Compute new CAP')
- 
-            if compute_new_cap:
-                grade2pt_arr = np.array([valid_grades_to_cap[key] for key in st.session_state['new_grade_count']])
-                new_mcs_arr = np.array(st.session_state['new_mc_count'])
+    col_i, col_ii = st.columns([1, 2])
 
-                new_cap = ((current_cap * total_mcs) + sum(grade2pt_arr * new_mcs_arr)) / (total_mcs + sum(new_mcs_arr))
-                new_mcs = total_mcs + sum(new_mcs_arr)
+    with col_i:
+        st.markdown(f"No. of Modules Added: **{len(annotated)}**")
+    
+    with col_ii:
+        st.markdown(f"No. of Module Credits Added: **{annotated['Module Credits'].sum()}**")
 
-                fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
-                                    header = dict(values = ['<b>New CAP Stats<b>', 
-                                                            '<b>Result<b>'],
-                                                fill_color = 'lightcoral',
-                                                line_color = 'black',
-                                                align = 'center',
-                                                font = dict(color = 'black', 
-                                                            size = 14,
-                                                            family = 'Georgia')),
-                                    cells = dict(values = [['New CAP after computation',
-                                                            'New CAP (To 4 d.p.)',
-                                                            'MCs used to calculate new CAP'],
-                                                            [round(new_cap, 2),
-                                                             round(new_cap, 4),
-                                                             round(new_mcs, 2)]], 
-                                                fill_color = 'wheat',
-                                                line_color = 'black',
-                                                align = ['left', 'center'],
-                                                font = dict(color = 'black', 
-                                                            size = [14, 14],
-                                                            family = ['Georgia', 'Georgia Bold']),
-                                                height = 25))])
-                
-                fig.update_layout(height = 170, width = 200, margin = dict(l = 5, r = 5, t = 5, b = 5))
-                st.plotly_chart(fig, use_container_width = True)
+    button = st.button('Calculate New CAP')
+
+    # Button to calculate new CAP
+    if button and not annotated.empty:
+        annotated['cap_score'] = annotated['Module Grade'].map(valid_grades_to_cap)
+        annotated['weighted_cap'] = annotated['Module Credits'] * annotated['cap_score']
+
+        new_cap = (current_cap * current_mcs + annotated['weighted_cap'].sum()) / (current_mcs + annotated['Module Credits'].sum())
+        new_mcs = current_mcs + annotated['Module Credits'].sum()
+
+        fig = go.Figure(data = [go.Table(columnwidth = [2.5, 1.5],
+                            header = dict(values = ['<b>New CAP Stats<b>', 
+                                                    '<b>Result<b>'],
+                                        fill_color = 'lightcoral',
+                                        line_color = 'black',
+                                        align = 'center',
+                                        font = dict(color = 'black', 
+                                                    size = 14,
+                                                    family = 'Georgia')),
+                            cells = dict(values = [['New CAP after computation',
+                                                    'New CAP (To 4 d.p.)',
+                                                    'MCs used to calculate new CAP'],
+                                                    [round(new_cap, 2),
+                                                        round(new_cap, 4),
+                                                        round(new_mcs, 2)]], 
+                                        fill_color = 'wheat',
+                                        line_color = 'black',
+                                        align = ['left', 'center'],
+                                        font = dict(color = 'black', 
+                                                    size = [14, 14],
+                                                    family = ['Georgia', 'Georgia Bold']),
+                                        height = 25))])
+        
+        fig.update_layout(height = 170, width = 200, margin = dict(l = 5, r = 5, t = 5, b = 5))
+        st.plotly_chart(fig, use_container_width = True)
            
             
 def sense(unique_mcs):
@@ -658,3 +643,4 @@ def explain():
 if __name__ == "__main__":
     st.set_page_config(page_title = 'NUS Module CAP Calculator', page_icon = '📝')
     main()
+    
