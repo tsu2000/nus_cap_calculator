@@ -271,7 +271,7 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
             worksheet.autofilter(0, 0, df.shape[0], df.shape[1]-1)
 
             # Saving and returning data
-            writer.save()
+            writer.close()
             processed_data = output.getvalue()
 
             return processed_data
