@@ -430,7 +430,7 @@ def future(unique_mcs):
                                                 'Module Credits': st.column_config.NumberColumn(default = 4.0, min_value = 0.5, max_value = 100, step = 0.5),
                                                 'Module Grade': st.column_config.SelectboxColumn(default = 'B+')}, 
                                num_rows = 'dynamic', 
-                               use_container_width = True)
+                               use_container_width = False)
     
     col_i, col_ii = st.columns([1, 2])
 
