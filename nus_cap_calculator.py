@@ -205,7 +205,7 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
                      use_container_width = True)
         st.write('''<style>
 [data-testid="stDataFrameResizable"] {
-        border: 0.5px solid rgba(250, 250, 250, 0.1) !important;
+        border: 5px solid rgba(250, 250, 250, 0.1) !important;
 }
 </style>''', unsafe_allow_html=True)
         
