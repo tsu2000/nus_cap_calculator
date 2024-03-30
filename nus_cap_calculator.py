@@ -202,7 +202,7 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
     # Display module data in DataFrame
     if st.session_state['all_module_data'] != []:
         st.dataframe(df.style.format(precision = 1),
-                     use_container_width = True)
+                     width = 800)
         
     analysis_col, export_col = st.columns([1, 0.265]) 
 
