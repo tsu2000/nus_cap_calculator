@@ -202,7 +202,12 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
     # Display module data in DataFrame
     if st.session_state['all_module_data'] != []:
         st.dataframe(df.style.format(precision = 1),
-                     width = 800)
+                     use_container_width = True)
+        st.write('''<style>
+[data-testid="stDataFrameResizable"] {
+        border: 2px solid rgba(250, 250, 250, 0.1) !important;
+}
+</style>''', unsafe_allow_html=True)
         
     analysis_col, export_col = st.columns([1, 0.265]) 
 
