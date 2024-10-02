@@ -300,19 +300,19 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
         cap = sum(df2['No. of MCs'] * df2['Grade Points']) / sum(df2['No. of MCs'])
         total_mcs_cap = sum(df2['No. of MCs'])
 
-        final_cap = round(cap, 2)
+        dp2_cap = round(cap, 2)
         dp4_cap = round(cap, 4)
 
         # Degree classification
-        if final_cap >= 4.50:
+        if dp4_cap >= 4.50:
             degree_class = 'Honours (Highest Distinction)'
-        elif final_cap >= 4.00:
+        elif dp4_cap >= 4.00:
             degree_class = 'Honours (Distinction)'
-        elif final_cap >= 3.50:
+        elif dp4_cap >= 3.50:
             degree_class = 'Honours (Merit)'            
-        elif final_cap >= 3.00:
+        elif dp4_cap >= 3.00:
             degree_class = 'Honours'        
-        elif final_cap >= 2.00:
+        elif dp4_cap >= 2.00:
             degree_class = 'Pass'
         else:
             degree_class = 'Below requirements for graduation'
@@ -328,7 +328,7 @@ def calc(data, yr_1, yr_2, now, mod_years, all_acad_years):
         cscu_mods = len(df.loc[(df['Grade'] == 'CU') | (df['Grade'] == 'CS')])
         unrq_mods = len(df.loc[(df['Grade'] == 'EXE') | (df['Grade'] == 'IC') | (df['Grade'] == 'IP') | (df['Grade'] == 'W')])
 
-        table_dict = {'Final CAP': final_cap,
+        table_dict = {'Final CAP': dp2_cap,
                       'Degree Classification': degree_class,
                       'Your CAP (To 4 d.p.)': dp4_cap,
                       'No. of MCs used to calculate CAP': total_mcs_cap,
@@ -413,7 +413,7 @@ def future(unique_mcs):
                            'F': 0.0,
                            'S/U': None}
     
-    data = {'Module Name': ['Sample Module 1', 'Sample Module 2', 'Sample Module 3', 'Sample Module 4', 'Sample Module 5'],
+    data = {'Module Name': ['Sample Module', 'Sample Module', 'Sample Module', 'Sample Module', 'Sample Module'],
             'Module Credits': [4, 4, 4, 4, 4],
             'Module Grade': ['A+/A', 'A-', 'B+', 'B', 'C+']}
     
@@ -425,7 +425,7 @@ def future(unique_mcs):
     df['Module Grade'] = df['Module Grade'].cat.add_categories(['B-', 'C', 'D+', 'D', 'F', 'S/U'])
 
     annotated = st.data_editor(df, 
-                               column_config = {'Module Name': st.column_config.TextColumn(default = 'Another Sample Module', disabled = True),
+                               column_config = {'Module Name': st.column_config.TextColumn(default = 'Sample Module', disabled = True),
                                                 'Module Credits': st.column_config.NumberColumn(default = 4.0, min_value = 0.5, max_value = 100, step = 0.5),
                                                 'Module Grade': st.column_config.SelectboxColumn(default = 'B+')}, 
                                num_rows = 'dynamic', 
